@@ -1,0 +1,4 @@
+GlyphoIntepreter
+src/*.o
+.vscode*
+*.zip
