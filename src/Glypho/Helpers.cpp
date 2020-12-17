@@ -13,7 +13,9 @@ std::string Throwable::message(Throwable::SyntaxError error) {
     std::string msg = "SyntaxError: ";
     switch (error) {
         case SyntaxError::CODE_LENGTH_INVALID: {
-            msg += "The length of the code is not divisible by 4";
+            msg +=
+                "Invalid instruction (the number of chars in the source code "
+                "should be divisible by 4)";
         } break;
         case SyntaxError::CLOSING_BRACE_EXPECTED: {
             msg += "Expected a closing brace (R-Brace)";

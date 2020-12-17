@@ -7,6 +7,10 @@
 
 #pragma once
 
+#include <stack>
+#include <thread>
+#include <vector>
+
 #include "Helpers.hpp"
 #include "InputParser.hpp"
 #include "Instruction.hpp"
@@ -19,9 +23,13 @@ namespace Glypho {
      */
     class Interpreter {
        private:
-        std::string code_path;    // The path to the file containing the program's code
-        unsigned int input_numbers_base;    // The base of the numbers that can be read from stdin
-        bool code_loaded;          // If a program was loaded
+        std::string
+            code_path;    // The path to the file containing the program's code
+        unsigned int input_numbers_base;    // The base of the numbers that can
+                                            // be read from stdin
+        bool code_loaded;                   // If a program was loaded
+
+        std::vector<Core::Instruction> program;
 
        public:
         /**
@@ -48,7 +56,7 @@ namespace Glypho {
 
         /**
          * @brief Assignment operator
-         * 
+         *
          * @param other The other object
          * @return Interpreter& The new object
          */

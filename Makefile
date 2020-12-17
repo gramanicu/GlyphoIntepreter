@@ -5,7 +5,7 @@
 
 # Program arguments
 
-INPUT = ./tests/hello.gly
+INPUT = ./tests/fibonacci.gly
 BASE = 
 
 # Compilation variables

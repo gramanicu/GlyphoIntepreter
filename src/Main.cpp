@@ -7,13 +7,15 @@
 
 #include <iostream>
 #include <string>
-#include "./Glypho/Interpreter.hpp"
-#include "./Glypho/Helpers.hpp"
 
-int main(int argc, char **argv) {
+#include "./Glypho/Helpers.hpp"
+#include "./Glypho/Interpreter.hpp"
+
+int main(int argc, char** argv) {
     // Check the program arguments
-    if(argc != 2 && argc != 3) {
-         Glypho::Helpers::MUST(false, "ArgumentError: Invalid number of arguments\n");
+    if (argc != 2 && argc != 3) {
+        Glypho::Helpers::MUST(false,
+                              "ArgumentError: Invalid number of arguments\n");
     }
 
     // Store the path
@@ -21,7 +23,7 @@ int main(int argc, char **argv) {
     Glypho::Interpreter g_interpreter;
 
     // Assign the parameters to the interpreter
-    if(argc == 2) {
+    if (argc == 2) {
         // Base was not provided
         g_interpreter = Glypho::Interpreter(path);
     } else {
@@ -29,13 +31,17 @@ int main(int argc, char **argv) {
         int base;
         try {
             base = std::stoi(std::string(argv[2]));
-        } catch(std::exception& e) {
+        } catch (std::exception& e) {
             // Argument was not a number
-            Glypho::Helpers::MUST(false, "ArgumentError: Base '" + std::string(argv[2]) + "' is not a number\n");
+            Glypho::Helpers::MUST(false, "ArgumentError: Base '" +
+                                             std::string(argv[2]) +
+                                             "' is not a number\n");
         }
 
         // Check if the base is a valid number
-        Glypho::Helpers::MUST(base > 0, "ArgumentError: Base '" + std::to_string(base) + "' is not a valid number\n");
+        Glypho::Helpers::MUST(base > 0, "ArgumentError: Base '" +
+                                            std::to_string(base) +
+                                            "' is not a valid number\n");
 
         // Base was a valid number
         g_interpreter = Glypho::Interpreter(path, base);

@@ -41,8 +41,9 @@ std::vector<std::string> InputParser::read_data(std::string path) {
     std::ifstream input(path);
 
     // Exit the program if the input file is unavailable
-    Helpers::MUST_NOT(input.fail() || input.bad(),
-                      "ArgumentError: Couldn't find or open the specified file\n");
+    Helpers::MUST_NOT(
+        input.fail() || input.bad(),
+        "ArgumentError: Couldn't find or open the specified file\n");
 
     return InputParser::read_data(input);
 }

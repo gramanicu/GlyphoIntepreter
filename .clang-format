@@ -2,6 +2,8 @@
 Language:        Cpp
 BasedOnStyle:  Google
 AccessModifierOffset: -1
+AllowShortBlocksOnASingleLine: Always
+AllowShortCaseLabelsOnASingleLine: true
 AlignOperands:   true
 AlignTrailingComments: true
 ColumnLimit:     80
