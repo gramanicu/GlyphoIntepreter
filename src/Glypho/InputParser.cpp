@@ -16,8 +16,8 @@ std::vector<std::string> InputParser::read_data(std::istream& input) {
     char character;
 
     while (input >> character) {
-        // Ignore empty spaces
-        if (character == ' ') continue;
+        // Ignore invalid characters
+        if (character < 33 || character > 126) continue;
 
         instruction.push_back(character);
 
