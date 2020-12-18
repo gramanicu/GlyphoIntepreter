@@ -56,7 +56,7 @@ void Interpreter::load_program() {
         // Split the program into segments, once to each thread
         int start = thread_id * (double)instruction_count / thread_count;
         int end = std::min(
-            (int)((thread_id + 1) * (double)instruction_count / thread_count),
+            (int)(((long int)thread_id + 1) * (double)instruction_count / thread_count),
             instruction_count);
 
         // The thread function that decodes the instructions
@@ -103,6 +103,10 @@ void Interpreter::load_program() {
             // Process code block (link the two braces)
             instruction.set_jump_id(block_start);
             program.at(block_start).set_jump_id(block_end);
+
+            if (next_id >= instruction_count) {
+                instruction.set_next_id(-1);
+            }
         } else {
             long int next_id = instruction.get_id() + 1;
 

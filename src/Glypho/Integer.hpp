@@ -61,6 +61,9 @@ namespace Glypho::Core {
 
                     if (value[i] > other.value[i]) { return true; }
                 }
+
+                if (value[0] < other.value[0]) { return false;  }
+                if (value[0] > other.value[0]) { return true; }
             } else {
                 if (value.size() < other.value.size()) { return true; }
 
@@ -71,6 +74,9 @@ namespace Glypho::Core {
 
                     if (value[i] > other.value[i]) { return false; }
                 }
+
+                if (value[0] < other.value[0]) { return true; }
+                if (value[0] > other.value[0]) { return false; }
             }
 
             return false;
@@ -90,6 +96,9 @@ namespace Glypho::Core {
 
                     if (value[i] > other.value[i]) { return false; }
                 }
+
+                if (value[0] < other.value[0]) { return true; }
+                if (value[0] > other.value[0]) { return false; }
             } else {
                 if (value.size() < other.value.size()) { return false; }
 
@@ -100,6 +109,9 @@ namespace Glypho::Core {
 
                     if (value[i] > other.value[i]) { return true; }
                 }
+
+                if (value[0] < other.value[0]) { return false; }
+                if (value[0] > other.value[0]) { return true; }
             }
             return false;
         }
