@@ -31,6 +31,7 @@ Integer::Integer(const std::string& value) {
     } else if (!is_negative) {
         this->value.clear();
     }
+
 }
 
 Integer::Integer(const Integer& other) {
@@ -235,60 +236,121 @@ Integer Integer::abs() const {
     return i;
 }
 
-namespace Glypho::Core {
-    Integer operator+(Integer l, const Integer& r) {
-        if (l.is_negative != r.is_negative) {
-            if (l.is_negative) { return r - l; }
-            return l - r;
+Integer Integer::neg() const {
+    Integer i(*this);
+    i.is_negative = true;
+    return i;
+}
+
+void Integer::check_zero() {
+    bool is_null = true;
+
+    if (value.size() > 0) {
+        for (auto& i : value) {
+            if (i != 0) {
+                is_null = false;
+                break;
+            }
         }
+    }
 
-        bool carry = false;
-        unsigned long int i;
-        Integer other(r);
+    if (is_null) {
+        value.clear();
+        value.push_back(0);
+    }
+}
 
-        if (l.abs() < other.abs()) {
-            Integer aux = l;
-            l = other;
-            other = aux;
-        }
+Integer Integer::sum(Integer l, Integer r) {
+    bool carry = false;
+    unsigned long int i = 0;
+    Integer other(r);
 
-        for (i = 0; i < other.value.size(); ++i) {
+    if (l < other) {
+        Integer aux = l;
+        l = other;
+        other = aux;
+    }
+
+    do {
+        if (i < other.value.size()) {
             l.value.at(i) += other.value.at(i) + carry;
             carry = l.value.at(i) > 9;
             l.value.at(i) %= 10;
-        }
-
-        if (carry) {
-            if (i != l.value.size()) {
+        } else {
+            if (i < l.value.size()) {
                 l.value.at(i) += 1;
+                carry = l.value.at(i) > 9;
                 l.value.at(i) %= 10;
             } else {
                 l.value.push_back(1);
+                break;
             }
         }
+        i++;
+    } while (carry || i < other.value.size());
 
-        return l;
+    return l;
+}
+
+Integer Integer::dif(Integer l, Integer r) {
+    bool carry = false;
+    unsigned long int i = 0;
+
+    Integer other(r);
+    bool negative = false;
+
+    if (l < other) {
+        Integer aux = l;
+        l = other;
+        other = aux;
+        negative = true;
+    }
+
+    for (i = 0; i < other.value.size(); ++i) {
+        l.value.at(i) += 10;
+        l.value.at(i) -= other.value.at(i) - carry;
+        carry = l.value.at(i) < 10;
+        l.value.at(i) %= 10;
+    }
+
+    if (carry) {
+        l.value.at(i)--;
+        if (l.value.at(i) == 0) { l.value.pop_back(); }
+    }
+
+    l.check_zero();
+
+    if (negative) return l.neg();
+    return l;
+}
+
+namespace Glypho::Core {
+    Integer operator+(Integer l, const Integer& r) {
+        if (l.is_negative && !r.is_negative) {
+            return Integer::dif(r.abs(), l.abs());
+        } else if (!l.is_negative && r.is_negative) {
+            return Integer::dif(l.abs(), r.abs());
+        }
+
+        if (l.is_negative) {
+            return Integer::sum(l.abs(), r.abs()).neg();
+        } else {
+            return Integer::sum(l.abs(), r.abs());
+        }
     }
 
     Integer operator-(Integer l, const Integer& r) {
-        if (l.is_negative == r.is_negative) { return l + r; }
-
-        bool carry = false;
-        unsigned long int i;
-
-        if (l.abs() >= r.abs()) {
-            for (i = 0; i < r.value.size(); ++i) {
-                l.value.at(i) += 10;
-                l.value.at(i) -= r.value.at(i) - carry;
-                carry = l.value.at(i) < 10;
-                l.value.at(i) %= 10;
-            }
-
-            if (carry) { l.value.at(i)--; }
-        } else {
+        if (l.is_negative && !r.is_negative) {
+            return (Integer::sum(l.abs(), r.abs()).neg());
+        } else if (!l.is_negative && r.is_negative) {
+            return (Integer::sum(l.abs(), r.abs()));
         }
 
-        return l;
+        if (l.is_negative) {
+            return Integer::dif(r.abs(), l.abs());
+        } else {
+            return Integer::dif(l.abs(), r.abs());
+        }
     }
 
     Integer operator*(Integer l, const Integer& r) {
@@ -296,36 +358,49 @@ namespace Glypho::Core {
         bool switch_signs = false;
         if (l.is_negative != r.is_negative) { switch_signs = true; }
 
-        for (Integer i("0"); i < r; i++) {
-            if (switch_signs) { l.is_negative = !l.is_negative; }
-            l = l + l;
-        }
-
-        return l;
-    }
-
-    Integer operator/(Integer l, const Integer& r) {
-        // TODO - check signs and test
-        Integer div = l;
+        Integer step = l.abs();
         Integer res("0");
-        while (l > Integer("0")) {
-            l = l - div;
-            res = ++res;
-        }
+
+        for (Integer i("0"); i < r.abs(); i++) { res = res + step; }
+
+        if (switch_signs) return res.neg();
 
         return res;
     }
 
-    Integer operator%(Integer l, const Integer& r) {
-        // TODO - check signs and test
-        Integer div = l;
-        while (l - div > Integer("0")) { l = l - div; }
+    Integer operator/(Integer l, const Integer& r) {
+        Integer div = r.abs();
+        Glypho::Helpers::MUST_NOT(
+            (div == Integer("0")),
+            Glypho::Throwable::message(
+                Glypho::Throwable::RuntimeException::DIVISION_BY_0) +
+                "\n");
 
-        return l;
+        bool switch_signs = false;
+        if (l.is_negative != r.is_negative) { switch_signs = true; }
+
+        Integer res("0");
+        l = l.abs();
+
+        while (l - div >= Integer("0")) {
+            l = l - div;
+            res++;
+        }
+
+        if (switch_signs) return res.neg();
+        return res;
+    }
+
+    Integer operator%(Integer l, const Integer& r) {
+        Integer div = l / r;
+
+        Integer remainder = l - (div * r);
+
+        return remainder;
     }
 
     std::ostream& operator<<(std::ostream& os, const Integer& i) {
-        if (i.value.size() > 0) {
+        if (i.value.size() > 1) {
             if (i.is_negative) { os << "-"; }
 
             for (unsigned long int id = i.value.size() - 1; id > 0; id--) {
@@ -333,7 +408,13 @@ namespace Glypho::Core {
             }
             os << std::to_string(i.value.at(0));
         } else {
-            os << "0";
+            if (i.value.at(0) != 0) {
+                if (i.is_negative) { os << "-"; }
+                os << (int)i.value.at(0);
+            }
+            else {
+                os << "0";
+            }
         }
 
         return os;

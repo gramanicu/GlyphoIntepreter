@@ -3,4 +3,3 @@ src/*.o
 src/*/*.o
 .vscode*
 *.zip
-*.log

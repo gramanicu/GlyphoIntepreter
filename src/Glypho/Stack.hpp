@@ -11,11 +11,17 @@
 #include <string>
 #include <vector>
 
+#include "Helpers.hpp"
+
 namespace Glypho::Core {
     class Integer {
        private:
         std::vector<uint8_t> value;
         bool is_negative;
+
+        static Integer sum(Integer l, Integer r);
+        static Integer dif(Integer l, Integer r);
+        void check_zero();
 
        public:
         // Constructors
@@ -26,6 +32,7 @@ namespace Glypho::Core {
 
         // Math functions
         Integer abs() const;
+        Integer neg() const;
 
         // Arithmetic operators
         friend Integer operator+(Integer l, const Integer& r);

@@ -65,8 +65,10 @@ namespace Glypho {
                             // stack, but it is empty
             INSUFFICIENT_STACK_SIZE,    // The operation needs more elements
                                         // than are available on the stack
-            INVALID_INPUT_BASE    // The base of the input numbers is not the
-                                  // one expected
+            INVALID_INPUT_BASE,    // The base of the input numbers is not the
+                                   // one expected
+            DIVISION_BY_0          // A division by 0 was attempted
+
         };
 
         /**

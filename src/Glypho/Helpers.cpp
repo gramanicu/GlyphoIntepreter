@@ -29,7 +29,7 @@ std::string Throwable::message(Throwable::SyntaxError error) {
 }
 
 std::string Throwable::message(Throwable::RuntimeException exception) {
-    std::string msg = "RuntimeException:";
+    std::string msg = "RuntimeException: ";
     switch (exception) {
         case RuntimeException::EMPTY_STACK: {
             msg +=
@@ -44,6 +44,9 @@ std::string Throwable::message(Throwable::RuntimeException exception) {
                 "The base of the input number is not corresponding to "
                 "the base that was selected initially";
         } break;
+        case RuntimeException::DIVISION_BY_0: {
+            msg += "Invalid arithmetic operation, division by 0";
+        }
     }
 
     return msg;

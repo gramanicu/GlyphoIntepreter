@@ -47,12 +47,6 @@ int main(int argc, char** argv) {
         g_interpreter = Glypho::Interpreter(path, base);
     }
 
-    Glypho::Core::Integer a("-100");
-    Glypho::Core::Integer b("-50");
-
-    std::cout << (a < b) << " " << (a > b) << " " << (a <= b) << " " << (a >= b)
-              << " " << (a == b) << " " << (a != b) << "\n";
-
     // Load the program
     g_interpreter.load_program();
 
