@@ -307,15 +307,30 @@ Integer Integer::dif(Integer l, Integer r) {
 
     for (i = 0; i < other.value.size(); ++i) {
         l.value.at(i) += 10;
-        l.value.at(i) -= other.value.at(i) - carry;
+        l.value.at(i) -= (other.value.at(i) + carry);
         carry = l.value.at(i) < 10;
         l.value.at(i) %= 10;
     }
 
-    if (carry) {
+    while (carry && i < l.value.size()) {
         l.value.at(i)--;
-        if (l.value.at(i) == 0) { l.value.pop_back(); }
+        l.value.at(i) += 10;
+        carry = l.value.at(i) < 10;
+        l.value.at(i) %= 10;
+
+        i++;
     }
+
+    int to_erase = 0;
+    for (int i = l.value.size() - 1; i >= 0; --i) {
+        if (l.value.at(i) == 0) {
+            to_erase++;
+        } else {
+            break;
+        }
+    }
+
+    for (int i = 0; i < to_erase; ++i) { l.value.pop_back(); }
 
     l.check_zero();
 

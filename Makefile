@@ -50,7 +50,12 @@ gitignore:
 	@echo "src/*/*.o" >> .gitignore ||:
 	@echo ".vscode*" >> .gitignore ||:	
 	@echo "*.zip" >> .gitignore ||:	
-	
+	@echo "*vcx*" >> .gitignore ||:	
+	@echo "*.log" >> .gitignore ||:	
+	@echo "*.sln" >> .gitignore ||:	
+	@echo ".vs*" >> .gitignore ||:	
+	@echo "Debug*" >> .gitignore ||:	
+
 # Creates an archive of the project
 archive: clean
 	cp Readme.md README

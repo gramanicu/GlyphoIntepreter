@@ -141,8 +141,9 @@ void Interpreter::run_program() {
         instructions_exec++;
         program.at(instruction_id).execute(&glypho_stack, &instruction_id, &program);
 
-        if(instructions_exec > 1000) {
-            return;
-        }
+        // To stop infinite looping
+        // if(instructions_exec > 1000) {
+        //     return;
+        // }
     }
 }

@@ -3,3 +3,8 @@ src/*.o
 src/*/*.o
 .vscode*
 *.zip
+*vcx*
+*.log
+*.sln
+.vs*
+Debug*
