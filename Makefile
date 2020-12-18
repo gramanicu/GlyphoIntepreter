@@ -5,14 +5,14 @@
 
 # Program arguments
 
-INPUT = ./tests/fibonacci.gly
+INPUT = ./tests/printn.gly
 BASE = 
 
 # Compilation variables
 CC = g++
 CFLAGS = -Wno-unused-parameter -Wall -Wextra -pedantic -pthread -g -O3 -std=c++17
 EXE = GlyphoIntepreter
-SRC = src/Main.cpp src/Glypho/InputParser.cpp src/Glypho/Interpreter.cpp src/Glypho/Instruction.cpp src/Glypho/Stack.cpp src/Glypho/Helpers.cpp
+SRC = src/Main.cpp src/Glypho/InputParser.cpp src/Glypho/Interpreter.cpp src/Glypho/Instruction.cpp src/Glypho/Stack.cpp src/Glypho/Integer.cpp src/Glypho/Helpers.cpp
 OBJ = $(SRC:.cpp=.o)
 
 CSFILES = */*.cpp */*/*.cpp */*/*.hpp
@@ -41,7 +41,7 @@ beauty:
 # Checks the memory for leaks
 MFLAGS = --leak-check=full --show-leak-kinds=all --track-origins=yes
 memory:clean build
-	valgrind $(MFLAGS) ./$(EXE)
+	valgrind $(MFLAGS) ./$(EXE) $(INPUT) $(BASE) 
 
 # Adds and updates gitignore rules
 gitignore:

@@ -12,20 +12,27 @@ using namespace Glypho;
 Interpreter::Interpreter()
     : code_path(""),
       input_numbers_base(Constants::DEFAULT_INPUT_BASE),
-      code_loaded(false) {}
+      code_loaded(false) {
+    glypho_stack = Core::Stack();
+}
 
 Interpreter::Interpreter(const std::string& path, const unsigned int base)
-    : code_path(path), input_numbers_base(base), code_loaded(false) {}
+    : code_path(path), input_numbers_base(base), code_loaded(false) {
+    glypho_stack = Core::Stack();
+}
 
 Interpreter::Interpreter(const Interpreter& other)
     : code_path(other.code_path),
       input_numbers_base(other.input_numbers_base),
-      code_loaded(false) {}
+      code_loaded(false),
+      glypho_stack(other.glypho_stack) {}
 
 Interpreter& Interpreter::operator=(const Interpreter& other) {
     this->code_path = other.code_path;
     this->input_numbers_base = other.input_numbers_base;
     this->code_loaded = false;
+    this->glypho_stack = other.glypho_stack;
+
     return *this;
 }
 
@@ -76,8 +83,14 @@ void Interpreter::load_program() {
         InstructionType type = instruction.get_type();
 
         if (type == InstructionType::LBrace) {
+            long int next_id = instruction.get_id() + 1;
+            instruction.set_next_id(next_id);
+
             braces_stack.push(instruction.get_id());
         } else if (type == InstructionType::RBrace) {
+            long int next_id = instruction.get_id() + 1;
+            instruction.set_next_id(next_id);
+
             // Check if there are any opened braces
             Helpers::MUST_NOT(
                 braces_stack.empty(),
@@ -88,16 +101,18 @@ void Interpreter::load_program() {
             braces_stack.pop();
 
             // Process code block (link the two braces)
-            instruction.set_next_id(block_start);
-            program.at(block_start).set_next_id(block_end);
+            instruction.set_jump_id(block_start);
+            program.at(block_start).set_jump_id(block_end);
         } else {
             long int next_id = instruction.get_id() + 1;
 
             // If we have not reached the end of the program
             if (next_id < instruction_count) {
                 instruction.set_next_id(next_id);
+                instruction.set_jump_id(next_id);
             } else {
                 instruction.set_next_id(-1);
+                instruction.set_jump_id(-1);
             }
         }
     }
@@ -114,4 +129,16 @@ void Interpreter::run_program() {
     if (!code_loaded) exit(-1);
 
     // Start the program execution
+    long int instruction_id = 0;
+    uint64_t instructions_exec = 0;
+
+    // -1 instruction id means there is no other instruction
+    while (instruction_id != -1) {
+        instructions_exec++;
+        program.at(instruction_id).execute(&glypho_stack, &instruction_id, &program);
+
+        if(instructions_exec > 1000) {
+            return;
+        }
+    }
 }

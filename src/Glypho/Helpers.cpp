@@ -46,7 +46,10 @@ std::string Throwable::message(Throwable::RuntimeException exception) {
         } break;
         case RuntimeException::DIVISION_BY_0: {
             msg += "Invalid arithmetic operation, division by 0";
-        }
+        } break;
+        case RuntimeException::INPUT_NOT_VALID_INT: {
+            msg += "The provided input was not an integer";
+        } break;
     }
 
     return msg;

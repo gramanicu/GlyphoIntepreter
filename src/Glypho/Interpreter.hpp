@@ -30,6 +30,7 @@ namespace Glypho {
         bool code_loaded;                   // If a program was loaded
 
         std::vector<Core::Instruction> program;
+        Core::Stack glypho_stack;
 
        public:
         /**

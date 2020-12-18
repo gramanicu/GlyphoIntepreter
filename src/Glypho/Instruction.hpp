@@ -13,6 +13,7 @@
 #include <unordered_map>
 
 #include "Helpers.hpp"
+#include "Stack.hpp"
 
 namespace Glypho::Core {
     enum class InstructionType {
@@ -41,11 +42,20 @@ namespace Glypho::Core {
      */
     std::string instruction_name(InstructionType type);
 
+    /**
+     * @brief Converts the number array to a string, by assigning a char to each unique element in the array
+     * This is used for the instructions extracted from the glypho stack
+     * @param arr The array of numbers
+     * @return std::string The encoded instuction
+     */
+    std::string encode_number_array(std::vector<Integer>& arr);
+
     class Instruction {
        private:
         InstructionType type;
         long int instruction_id;
         long int next_instruction_id;
+        long int jump_id;    // Used by braces to jump
 
        public:
         /**
@@ -98,6 +108,13 @@ namespace Glypho::Core {
         long int get_next_id() const;
 
         /**
+         * @brief Get the id of the next instruction (if takes a jump)
+         *
+         * @return long int The id
+         */
+        long int get_jump_id() const;
+
+        /**
          * @brief Set the id of the next instruction
          *
          * @param next_id The id
@@ -105,10 +122,26 @@ namespace Glypho::Core {
         void set_next_id(const long int next_id);
 
         /**
+         * @brief Set the id of the next instruction (if takes a jump)
+         *
+         * @param next_id The id
+         */
+        void set_jump_id(const long int next_id);
+
+        /**
          * @brief Get the type of the instruction
          *
          * @return InstructionType The type
          */
         InstructionType get_type() const;
+
+        /**
+         * @brief Executes the instructions
+         *
+         * @param glypho_stack The glypho stack the program uses
+         * @param instruction_id The current instruction id in the program
+         * @param program The program (instruction vector)
+         */
+        void execute(Stack* glypho_stack, long int* instruction_id, std::vector<Core::Instruction>* program);
     };
 }    // namespace Glypho::Core

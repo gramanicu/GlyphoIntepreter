@@ -1,10 +1,9 @@
 /**
  * @file Integer.cpp
  * @author Grama Nicolae (gramanicu@gmail.com)
- * @brief 
+ * @brief
  * @copyright Copyright (c) 2020
  */
-
 
 #include "Integer.hpp"
 
@@ -374,7 +373,8 @@ namespace Glypho::Core {
             (div == Integer("0")),
             Glypho::Throwable::message(
                 Glypho::Throwable::RuntimeException::DIVISION_BY_0) +
-                "\n");
+                "\n",
+            -2);
 
         bool switch_signs = false;
         if (l.is_negative != r.is_negative) { switch_signs = true; }

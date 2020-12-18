@@ -20,11 +20,12 @@ namespace Glypho {
          * error message and exit the program
          * @param condition The condition that must happen
          * @param error The error message
+         * @param code The exit code
          */
-        inline void MUST(bool condition, std::string error) {
+        inline void MUST(bool condition, std::string error, int code = -1) {
             if (!condition) {
                 std::cerr << error;
-                exit(-1);
+                exit(code);
             }
         }
 
@@ -33,11 +34,12 @@ namespace Glypho {
          * error message and exit the program
          * @param condition The condition that must happen
          * @param error The error message
+         * @param code The exit code
          */
-        inline void MUST_NOT(bool condition, std::string error) {
+        inline void MUST_NOT(bool condition, std::string error, int code = -1) {
             if (condition) {
                 std::cerr << error;
-                exit(-1);
+                exit(code);
             }
         }
     }    // namespace Helpers
@@ -67,8 +69,8 @@ namespace Glypho {
                                         // than are available on the stack
             INVALID_INPUT_BASE,    // The base of the input numbers is not the
                                    // one expected
-            DIVISION_BY_0          // A division by 0 was attempted
-
+            DIVISION_BY_0,         // A division by 0 was attempted
+            INPUT_NOT_VALID_INT    // The value provided was not a integer
         };
 
         /**
