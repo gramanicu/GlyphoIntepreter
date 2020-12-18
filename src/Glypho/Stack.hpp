@@ -24,6 +24,9 @@ namespace Glypho::Core {
         Integer(const Integer& other);
         Integer& operator=(const Integer& other);
 
+        // Math functions
+        Integer abs() const;
+
         // Arithmetic operators
         friend Integer operator+(Integer l, const Integer& r);
         friend Integer operator-(Integer l, const Integer& r);
@@ -39,30 +42,59 @@ namespace Glypho::Core {
 
         // Relational operators
         inline bool operator<(const Integer& other) {
-            if (value.size() < other.value.size()) { return true; }
+            if (!is_negative && other.is_negative) return false;
+            if (is_negative && !other.is_negative) return true;
 
-            if (value.size() > other.value.size()) { return false; }
+            if (is_negative) {
+                if (value.size() < other.value.size()) { return false; }
 
-            for (long unsigned int i = value.size() - 1; i > 0; i--) {
-                if (value[i] < other.value[i]) { return true; }
+                if (value.size() > other.value.size()) { return true; }
 
-                if (value[i] > other.value[i]) { return false; }
+                for (long unsigned int i = value.size() - 1; i > 0; i--) {
+                    if (value[i] < other.value[i]) { return false; }
+
+                    if (value[i] > other.value[i]) { return true; }
+                }
+            } else {
+                if (value.size() < other.value.size()) { return true; }
+
+                if (value.size() > other.value.size()) { return false; }
+
+                for (long unsigned int i = value.size() - 1; i > 0; i--) {
+                    if (value[i] < other.value[i]) { return true; }
+
+                    if (value[i] > other.value[i]) { return false; }
+                }
             }
-            
+
             return false;
         }
 
         inline bool operator>(const Integer& other) {
-            if (value.size() > other.value.size()) { return true; }
+            if (!is_negative && other.is_negative) return true;
+            if (is_negative && !other.is_negative) return false;
 
-            if (value.size() < other.value.size()) { return false; }
+            if (is_negative) {
+                if (value.size() < other.value.size()) { return true; }
 
-            for (long unsigned int i = value.size() - 1; i > 0; i--) {
-                if (value[i] > other.value[i]) { return true; }
+                if (value.size() > other.value.size()) { return false; }
 
-                if (value[i] < other.value[i]) { return false; }
+                for (long unsigned int i = value.size() - 1; i > 0; i--) {
+                    if (value[i] < other.value[i]) { return true; }
+
+                    if (value[i] > other.value[i]) { return false; }
+                }
+            } else {
+                if (value.size() < other.value.size()) { return false; }
+
+                if (value.size() > other.value.size()) { return true; }
+
+                for (long unsigned int i = value.size() - 1; i > 0; i--) {
+                    if (value[i] < other.value[i]) { return false; }
+
+                    if (value[i] > other.value[i]) { return true; }
+                }
             }
-
             return false;
         }
 
@@ -75,11 +107,13 @@ namespace Glypho::Core {
         }
 
         inline bool operator==(const Integer& other) {
-            if (value.size() == other.value.size()) {
-                for (long unsigned int i = 0; i < value.size(); ++i) {
-                    if (value[i] != other.value[i]) { return false; }
+            if (is_negative == other.is_negative) {
+                if (value.size() == other.value.size()) {
+                    for (long unsigned int i = 0; i < value.size(); ++i) {
+                        if (value[i] != other.value[i]) { return false; }
+                    }
+                    return true;
                 }
-                return true;
             }
             return false;
         }
