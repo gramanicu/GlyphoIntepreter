@@ -32,7 +32,9 @@ std::vector<std::string> InputParser::read_data(std::istream& input) {
     // an instruction, we must throw the SyntaxError
     Helpers::MUST(
         instruction.length() == 0,
-        Throwable::message(Throwable::SyntaxError::CODE_LENGTH_INVALID) + "\n");
+        Throwable::message(Throwable::SyntaxError::CODE_LENGTH_INVALID,
+                           encoded_instructions.size()) +
+            "\n");
 
     return encoded_instructions;
 }

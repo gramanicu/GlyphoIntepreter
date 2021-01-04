@@ -55,9 +55,9 @@ void Interpreter::load_program() {
     for (int thread_id = 0; thread_id < thread_count; ++thread_id) {
         // Split the program into segments, once to each thread
         int start = thread_id * (double)instruction_count / thread_count;
-        int end = std::min(
-            (int)(((long int)thread_id + 1) * (double)instruction_count / thread_count),
-            instruction_count);
+        int end = std::min((int)(((long int)thread_id + 1) *
+                                 (double)instruction_count / thread_count),
+                           instruction_count);
 
         // The thread function that decodes the instructions
         auto decoder = [start, end, &e_instructions, &program = program]() {
@@ -92,9 +92,10 @@ void Interpreter::load_program() {
             instruction.set_next_id(next_id);
 
             // Check if there are any opened braces
-            Helpers::MUST_NOT(
-                braces_stack.empty(),
-                message(SyntaxError::OPENING_BRACE_EXPECTED) + "\n");
+            Helpers::MUST_NOT(braces_stack.empty(),
+                              message(SyntaxError::OPENING_BRACE_EXPECTED,
+                                      instruction.get_id()) +
+                                  "\n");
 
             int block_start = braces_stack.top();
             int block_end = instruction.get_id();
@@ -104,9 +105,7 @@ void Interpreter::load_program() {
             instruction.set_jump_id(block_start);
             program.at(block_start).set_jump_id(block_end);
 
-            if (next_id >= instruction_count) {
-                instruction.set_next_id(-1);
-            }
+            if (next_id >= instruction_count) { instruction.set_next_id(-1); }
         } else {
             long int next_id = instruction.get_id() + 1;
 
@@ -122,8 +121,9 @@ void Interpreter::load_program() {
     }
 
     // Check that all braces are closed
-    Helpers::MUST(braces_stack.empty(),
-                  message(SyntaxError::CLOSING_BRACE_EXPECTED) + "\n");
+    Helpers::MUST(
+        braces_stack.empty(),
+        message(SyntaxError::CLOSING_BRACE_EXPECTED, instruction_count) + "\n");
 
     // The code is loaded, sa we can run it
     code_loaded = true;
@@ -139,11 +139,7 @@ void Interpreter::run_program() {
     // -1 instruction id means there is no other instruction
     while (instruction_id != -1) {
         instructions_exec++;
-        program.at(instruction_id).execute(&glypho_stack, &instruction_id, &program);
-
-        // To stop infinite looping
-        // if(instructions_exec > 1000) {
-        //     return;
-        // }
+        program.at(instruction_id)
+            .execute(&glypho_stack, &instruction_id, &program);
     }
 }

@@ -43,12 +43,13 @@ namespace Glypho::Core {
     std::string instruction_name(InstructionType type);
 
     /**
-     * @brief Converts the number array to a string, by assigning a char to each unique element in the array
-     * This is used for the instructions extracted from the glypho stack
+     * @brief Converts the number array to a string, by assigning a char to each
+     * unique element in the array This is used for the instructions extracted
+     * from the glypho stack
      * @param arr The array of numbers
      * @return std::string The encoded instuction
      */
-    std::string encode_number_array(std::vector<Integer>& arr);
+    std::string encode_number_array(std::vector<long long int>& arr);
 
     class Instruction {
        private:
@@ -56,6 +57,8 @@ namespace Glypho::Core {
         long int instruction_id;
         long int next_instruction_id;
         long int jump_id;    // Used by braces to jump
+        long int
+            parent_exec;    // Used by nested executes, to know the parent id
 
        public:
         /**
@@ -129,11 +132,25 @@ namespace Glypho::Core {
         void set_jump_id(const long int next_id);
 
         /**
+         * @brief Set the parent exec instruction id
+         *
+         * @param parent_exec_id The id of the parent
+         */
+        void set_parent_exec(const long int parent_exec_id);
+
+        /**
          * @brief Get the type of the instruction
          *
          * @return InstructionType The type
          */
         InstructionType get_type() const;
+
+        /**
+         * @brief Get the parent exec instruction id
+         *
+         * @return long int The id
+         */
+        long int get_parent_exec_id() const;
 
         /**
          * @brief Executes the instructions
@@ -142,6 +159,7 @@ namespace Glypho::Core {
          * @param instruction_id The current instruction id in the program
          * @param program The program (instruction vector)
          */
-        void execute(Stack* glypho_stack, long int* instruction_id, std::vector<Core::Instruction>* program);
+        void execute(Stack* glypho_stack, long int* instruction_id,
+                     std::vector<Core::Instruction>* program) const;
     };
 }    // namespace Glypho::Core

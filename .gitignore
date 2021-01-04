@@ -8,3 +8,4 @@ src/*/*.o
 *.sln
 .vs*
 Debug*
+checker/logs*

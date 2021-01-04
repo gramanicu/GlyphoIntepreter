@@ -30,7 +30,7 @@ std::string Glypho::Core::instruction_name(InstructionType type) {
     return "";
 }
 
-std::string Glypho::Core::encode_number_array(std::vector<Integer>& arr) {
+std::string Glypho::Core::encode_number_array(std::vector<long long int>& arr) {
     std::vector<char> encodes;
     std::string res = "";
 
@@ -38,9 +38,9 @@ std::string Glypho::Core::encode_number_array(std::vector<Integer>& arr) {
     char current_code = '0';
     for (int i = 0; i < 4; ++i) {
         int code = current_code++;
-        
-        for(int j = 0; j < i; ++j) {
-            if(arr[i] == arr[j]) {
+
+        for (int j = 0; j < i; ++j) {
+            if (arr[i] == arr[j]) {
                 code = encodes[j];
                 break;
             }
@@ -48,19 +48,26 @@ std::string Glypho::Core::encode_number_array(std::vector<Integer>& arr) {
 
         encodes.push_back(code);
     }
-    
-    for(auto& c : encodes) {
-        res += c;
-    }
+
+    for (auto& c : encodes) { res += c; }
 
     return res;
 }
 
-Instruction::Instruction() : type(InstructionType::NOP), instruction_id(-1) {}
+Instruction::Instruction()
+    : type(InstructionType::NOP),
+      instruction_id(-1),
+      next_instruction_id(-1),
+      jump_id(-1),
+      parent_exec(-1) {}
 
 Instruction::Instruction(const std::string& encoded_instruction,
                          const long int id)
-    : instruction_id(id) {
+    : type(InstructionType::NOP),
+      instruction_id(id),
+      next_instruction_id(-1),
+      jump_id(-1),
+      parent_exec(id) {
     std::unordered_map<char, int> associated_code;
     std::unordered_map<char, bool> appeared;
 
@@ -105,6 +112,7 @@ Instruction::Instruction(const Instruction& other) {
     this->instruction_id = other.instruction_id;
     this->next_instruction_id = other.next_instruction_id;
     this->jump_id = other.jump_id;
+    this->parent_exec = other.parent_exec;
 }
 
 Instruction& Instruction::operator=(const Instruction& other) {
@@ -112,6 +120,7 @@ Instruction& Instruction::operator=(const Instruction& other) {
     this->instruction_id = other.instruction_id;
     this->next_instruction_id = other.next_instruction_id;
     this->jump_id = other.jump_id;
+    this->parent_exec = other.parent_exec;
     return *this;
 }
 
@@ -129,9 +138,16 @@ long int Instruction::get_jump_id() const { return jump_id; }
 
 InstructionType Instruction::get_type() const { return type; }
 
-void Instruction::execute(Stack* glypho_stack,
-                          long int* program_instruction_id, std::vector<Core::Instruction>* program) {
+void Instruction::set_parent_exec(const long int parent_exec_id) {
+    parent_exec = parent_exec_id;
+}
+
+long int Instruction::get_parent_exec_id() const { return parent_exec; }
+
+void Instruction::execute(Stack* glypho_stack, long int* program_instruction_id,
+                          std::vector<Core::Instruction>* program) const {
     bool is_jumping = false;
+    int next_instr_id = this->get_next_id();
 
     switch (type) {
         case InstructionType::Input: {
@@ -139,80 +155,83 @@ void Instruction::execute(Stack* glypho_stack,
             std::string number;
             std::cin >> number;
 
+            // Parse the input (change from original base to base 10)
+
             // Check if the input is a number
             Helpers::MUST(
                 number.find_first_not_of("-0123456789") == std::string::npos,
                 Throwable::message(
-                    Throwable::RuntimeException::INPUT_NOT_VALID_INT) +
+                    Throwable::RuntimeException::INPUT_NOT_VALID_INT,
+                    this->get_id()) +
                     "\n",
                 -2);
 
-            glypho_stack->Input(Integer(number));
+            glypho_stack->Input(std::stoll(number));
         } break;
         case InstructionType::Rot: {
-            glypho_stack->Rotate();
+            glypho_stack->Rotate(get_id());
         } break;
         case InstructionType::Swap: {
-            glypho_stack->Swap();
+            glypho_stack->Swap(get_id());
         } break;
         case InstructionType::Push: {
             glypho_stack->Push();
         } break;
         case InstructionType::RRot: {
-            glypho_stack->ReverseRotate();
+            glypho_stack->ReverseRotate(get_id());
         } break;
         case InstructionType::Dup: {
-            glypho_stack->Dup();
+            glypho_stack->Dup(get_id());
         } break;
         case InstructionType::Add: {
-            glypho_stack->Add();
+            glypho_stack->Add(get_id());
         } break;
         case InstructionType::LBrace: {
             // Jump to associated RBrace if the top element is 0
-            if (glypho_stack->Peek() == Integer("0")) { is_jumping = true; }
+            if (glypho_stack->Peek(get_id()) == 0) { is_jumping = true; }
         } break;
         case InstructionType::Output: {
-            std::cout << glypho_stack->Output() << "\n";
+            std::cout << glypho_stack->Output(get_id()) << "\n";
         } break;
         case InstructionType::Multiply: {
-            glypho_stack->Multiply();
+            glypho_stack->Multiply(get_id());
         } break;
         case InstructionType::Execute: {
             // Get the instruction from the stack
-            std::vector<Integer> instr_code_arr = glypho_stack->Out_K_Elems(4);
+            std::vector<long long int> instr_code_arr =
+                glypho_stack->Out_K_Elems(4, get_parent_exec_id());
             std::string instr_code = encode_number_array(instr_code_arr);
             long int new_code = program->size();
 
             // Add the new instruction to the program
             Instruction new_instruction(instr_code, new_code);
+            new_instruction.set_parent_exec(get_parent_exec_id());
 
             // Link the new instruction to the others
             long int next_id;
-            if(next_instruction_id != -1) {
+            if (next_instruction_id != -1) {
                 next_id = program->at(next_instruction_id).get_id();
             } else {
                 next_id = -1;
             }
 
-            next_instruction_id = new_code;
+            next_instr_id = new_code;
             new_instruction.set_next_id(next_id);
             new_instruction.set_jump_id(next_id);
 
             program->push_back(new_instruction);
         } break;
         case InstructionType::Negate: {
-            glypho_stack->Negate();
+            glypho_stack->Negate(get_id());
         } break;
         case InstructionType::Pop: {
-            glypho_stack->Pop();
+            glypho_stack->Pop(get_id());
         } break;
         case InstructionType::RBrace: {
             // Jump to associated LBrace if the top element is 0
             // If the code jumped to this brace, the stack should not have
             // changed, so don't have to jump back to the opened brace
-            if (glypho_stack->Peek() != Integer("0")) {
-                is_jumping = true;
-            }
+            if (glypho_stack->Peek(get_jump_id()) != 0) { is_jumping = true; }
         } break;
         default: { /* NOP */
         } break;
@@ -221,7 +240,7 @@ void Instruction::execute(Stack* glypho_stack,
     if (is_jumping) {
         *program_instruction_id = jump_id;
     } else {
-        *program_instruction_id = next_instruction_id;
+        *program_instruction_id = next_instr_id;
     }
 }
 

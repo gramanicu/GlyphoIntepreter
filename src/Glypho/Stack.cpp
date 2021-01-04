@@ -8,7 +8,7 @@
 #include "Stack.hpp"
 
 namespace Glypho::Core {
-    Stack::Stack() { data = std::list<Integer>(); }
+    Stack::Stack() { data = std::list<long long int>(); }
 
     Stack::Stack(const Stack& other) { this->data = other.data; }
 
@@ -17,145 +17,152 @@ namespace Glypho::Core {
         return *this;
     }
 
-    void Stack::Push() { data.push_front(Integer("1")); }
+    void Stack::Push() { data.push_back(1); }
 
-    void Stack::Pop() {
+    void Stack::Pop(long int id) {
         Helpers::MUST_NOT(
             data.size() == 0,
-            Throwable::message(Throwable::RuntimeException::EMPTY_STACK) + "\n",
-            -2);
-
-        data.pop_front();
-    }
-
-    Integer Stack::Peek() const {
-        Helpers::MUST_NOT(
-            data.size() == 0,
-            Throwable::message(Throwable::RuntimeException::EMPTY_STACK) + "\n",
-            -2);
-
-        return data.front();
-    }
-
-    void Stack::Input(const Integer& value) { data.push_front(value); }
-
-    Integer Stack::Output() {
-        Helpers::MUST_NOT(
-            data.size() == 0,
-            Throwable::message(Throwable::RuntimeException::EMPTY_STACK) + "\n",
-            -2);
-
-        Integer value = data.front();
-        data.pop_front();
-        return value;
-    }
-
-    void Stack::Dup() {
-        Helpers::MUST_NOT(
-            data.size() == 0,
-            Throwable::message(Throwable::RuntimeException::EMPTY_STACK) + "\n",
-            -2);
-
-        Integer value = data.front();
-        data.push_front(value);
-    }
-
-    void Stack::Swap() {
-        Helpers::MUST(
-            data.size() >= 2,
-            Throwable::message(
-                Throwable::RuntimeException::INSUFFICIENT_STACK_SIZE) +
+            Throwable::message(Throwable::RuntimeException::EMPTY_STACK, id) +
                 "\n",
             -2);
 
-        Integer value1 = data.front();
-        data.pop_front();
-        Integer value2 = data.front();
-        data.pop_front();
-
-        data.push_front(value1);
-        data.push_front(value2);
+        data.pop_back();
     }
 
-    void Stack::Rotate() {
+    long long int Stack::Peek(long int id) const {
         Helpers::MUST_NOT(
             data.size() == 0,
-            Throwable::message(Throwable::RuntimeException::EMPTY_STACK) + "\n",
+            Throwable::message(Throwable::RuntimeException::EMPTY_STACK, id) +
+                "\n",
             -2);
 
-        Integer value = data.front();
-        data.pop_front();
+        return data.back();
+    }
+
+    void Stack::Input(const long long int& value) { data.push_back(value); }
+
+    long long int Stack::Output(long int id) {
+        Helpers::MUST_NOT(
+            data.size() == 0,
+            Throwable::message(Throwable::RuntimeException::EMPTY_STACK, id) +
+                "\n",
+            -2);
+
+        long long int value = data.back();
+        data.pop_back();
+        return value;
+    }
+
+    void Stack::Dup(long int id) {
+        Helpers::MUST_NOT(
+            data.size() == 0,
+            Throwable::message(Throwable::RuntimeException::EMPTY_STACK, id) +
+                "\n",
+            -2);
+
+        long long int value = data.back();
         data.push_back(value);
     }
 
-    void Stack::ReverseRotate() {
-        Helpers::MUST_NOT(
-            data.size() == 0,
-            Throwable::message(Throwable::RuntimeException::EMPTY_STACK) + "\n",
+    void Stack::Swap(long int id) {
+        Helpers::MUST(
+            data.size() >= 2,
+            Throwable::message(
+                Throwable::RuntimeException::INSUFFICIENT_STACK_SIZE, id) +
+                "\n",
             -2);
 
-        Integer value = data.back();
+        long long int value1 = data.back();
+        data.pop_back();
+        long long int value2 = data.back();
+        data.pop_back();
+
+        data.push_back(value1);
+        data.push_back(value2);
+    }
+
+    void Stack::Rotate(long int id) {
+        Helpers::MUST_NOT(
+            data.size() == 0,
+            Throwable::message(Throwable::RuntimeException::EMPTY_STACK, id) +
+                "\n",
+            -2);
+
+        long long int value = data.back();
         data.pop_back();
         data.push_front(value);
     }
 
-    void Stack::Add() {
-        Helpers::MUST(
-            data.size() >= 2,
-            Throwable::message(
-                Throwable::RuntimeException::INSUFFICIENT_STACK_SIZE) +
+    void Stack::ReverseRotate(long int id) {
+        Helpers::MUST_NOT(
+            data.size() == 0,
+            Throwable::message(Throwable::RuntimeException::EMPTY_STACK, id) +
                 "\n",
             -2);
 
-        Integer value1 = data.front();
+        long long int value = data.front();
         data.pop_front();
-        Integer value2 = data.front();
-        data.pop_front();
+        data.push_back(value);
+    }
+
+    void Stack::Add(long int id) {
+        Helpers::MUST(
+            data.size() >= 2,
+            Throwable::message(
+                Throwable::RuntimeException::INSUFFICIENT_STACK_SIZE, id) +
+                "\n",
+            -2);
+
+        long long int value1 = data.back();
+        data.pop_back();
+        long long int value2 = data.back();
+        data.pop_back();
 
         data.push_back(value1 + value2);
     }
 
-    void Stack::Multiply() {
+    void Stack::Multiply(long int id) {
         Helpers::MUST(
             data.size() >= 2,
             Throwable::message(
-                Throwable::RuntimeException::INSUFFICIENT_STACK_SIZE) +
+                Throwable::RuntimeException::INSUFFICIENT_STACK_SIZE, id) +
                 "\n",
             -2);
 
-        Integer value1 = data.front();
-        data.pop_front();
-        Integer value2 = data.front();
-        data.pop_front();
+        long long int value1 = data.back();
+        data.pop_back();
+        long long int value2 = data.back();
+        data.pop_back();
 
         data.push_back(value1 * value2);
     }
 
-    void Stack::Negate() {
+    void Stack::Negate(long int id) {
         Helpers::MUST_NOT(
             data.size() == 0,
-            Throwable::message(Throwable::RuntimeException::EMPTY_STACK) + "\n",
-            -2);
-
-        Integer value = data.front();
-        value = Integer("0") - value;
-
-        data.pop_front();
-        data.push_front(value);
-    }
-
-    std::vector<Integer> Stack::Out_K_Elems(const uint64_t count) {
-        Helpers::MUST(
-            data.size() >= count,
-            Throwable::message(
-                Throwable::RuntimeException::INSUFFICIENT_STACK_SIZE) +
+            Throwable::message(Throwable::RuntimeException::EMPTY_STACK, id) +
                 "\n",
             -2);
 
-        std::vector<Integer> values;
+        long long int value = data.back();
+        value = 0 - value;
+
+        data.pop_back();
+        data.push_back(value);
+    }
+
+    std::vector<long long int> Stack::Out_K_Elems(const uint64_t count, long int id) {
+        Helpers::MUST(
+            data.size() >= count,
+            Throwable::message(
+                Throwable::RuntimeException::INSUFFICIENT_STACK_SIZE, id) +
+                "\n",
+            -2);
+
+        std::vector<long long int> values;
         for (uint64_t i = 0; i < count; ++i) {
-            values.push_back(data.front());
-            data.pop_front();
+            values.push_back(data.back());
+            data.pop_back();
         }
 
         return values;

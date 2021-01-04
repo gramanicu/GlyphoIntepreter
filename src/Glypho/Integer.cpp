@@ -368,7 +368,6 @@ namespace Glypho::Core {
     }
 
     Integer operator*(Integer l, const Integer& r) {
-        // TODO - check signs and test
         bool switch_signs = false;
         if (l.is_negative != r.is_negative) { switch_signs = true; }
 
@@ -387,7 +386,7 @@ namespace Glypho::Core {
         Glypho::Helpers::MUST_NOT(
             (div == Integer("0")),
             Glypho::Throwable::message(
-                Glypho::Throwable::RuntimeException::DIVISION_BY_0) +
+                Glypho::Throwable::RuntimeException::DIVISION_BY_0, 0) +
                 "\n",
             -2);
 

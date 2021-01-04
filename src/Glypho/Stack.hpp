@@ -2,6 +2,7 @@
  * @file Stack.hpp
  * @author Grama Nicolae (gramanicu@gmail.com)
  * @brief Header for that Stack class, the stack used by the glypho interpreter
+ * Internally, the top of the stack is the end of the vector and vice-versa
  * @copyright Copyright (c) 2020
  */
 #pragma once
@@ -12,14 +13,16 @@
 #include <vector>
 
 #include "Helpers.hpp"
-#include "Integer.hpp"
+//#include "Integer.hpp"
 
 namespace Glypho::Core {
     class Stack {
        private:
-        std::list<Integer> data;
+        std::list<long long int> data;
 
        public:
+        // The id that some functions receive is the id of the current
+        // instruction (for error handling)
         /**
          * @brief Construct a new Stack object
          *
@@ -53,14 +56,14 @@ namespace Glypho::Core {
          *
          * @return Integer
          */
-        void Pop();
+        void Pop(long int id);
 
         /**
          * @brief Get the element from the top of the stack, but don't remove it
          *
          * @return Integer The value
          */
-        Integer Peek() const;
+        long long int Peek(long int id) const;
 
         /**
          * @brief Add an element at the top of the stack with the specified
@@ -68,66 +71,67 @@ namespace Glypho::Core {
          *
          * @param value New value
          */
-        void Input(const Integer& value);
+        void Input(const long long int& value);
 
         /**
          * @brief Get the element at the top of the stack and remove it
          *
          * @return Integer The top value
          */
-        Integer Output();
+        long long int Output(long int id);
 
         // Complex Stack Operations
         /**
          * @brief Duplicate the element at the top of the stack
          *
          */
-        void Dup();
+        void Dup(long int id);
 
         /**
          * @brief Swaps the top 2 elements in the stack
          *
          */
-        void Swap();
+        void Swap(long int id);
 
         /**
          * @brief Put the top element at the back
          *
          */
-        void Rotate();
+        void Rotate(long int id);
 
         /**
          * @brief Put the back element at the top
          *
          */
-        void ReverseRotate();
+        void ReverseRotate(long int id);
 
         /**
          * @brief Takes the top two elements, computes their sum, and pushes the
          * new element Will remove the two elements
          */
-        void Add();
+        void Add(long int id);
 
         /**
          * @brief Takes the top two elements, computes their product, and pushes
          * the new element Will remove the two elements
          */
-        void Multiply();
+        void Multiply(long int id);
 
         /**
          * @brief Removes the top element and inserts back the inverse of that
          * value
          *
          */
-        void Negate();
+        void Negate(long int id);
 
         /**
          * @brief Removes and retuns the specified amount of elements from the
          * stack
          *
          * @param count The number of elements
-         * @return std::vector<Integer> An array of elements
+         * @return std::vector<long long int> An array of elements
          */
-        std::vector<Integer> Out_K_Elems(const uint64_t count);
+        std::vector<long long int> Out_K_Elems(const uint64_t count,
+                                               long int id);
     };
 }    // namespace Glypho::Core

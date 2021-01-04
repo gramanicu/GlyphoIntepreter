@@ -3,11 +3,6 @@
 .PHONY: gitignore clean memory beauty run
 .SILENT: beauty clean memory gitignore
 
-# Program arguments
-
-INPUT = ./tests/printn.gly
-BASE = 
-
 # Compilation variables
 CC = g++
 CFLAGS = -Wno-unused-parameter -Wall -Wextra -pedantic -pthread -g -O3 -std=c++17
@@ -27,12 +22,12 @@ build: $(OBJ)
 	@$(CC) -o $@ -c $< $(CFLAGS) ||:
 
 # Executes the binary
-run: clean build
-	@./$(EXE) $(INPUT) $(BASE) ||:
+run:
+	./$(EXE) $(input) $(base)
 
 # Deletes the binary and object files
 clean:
-	rm -f $(EXE) $(OBJ) GlyphoIntepreter.zip
+	rm -f $(EXE) $(OBJ) GlyphoIntepreter.zip ./checker/logs/*
 
 # Automatic coding style, in my personal style
 beauty:
@@ -41,7 +36,7 @@ beauty:
 # Checks the memory for leaks
 MFLAGS = --leak-check=full --show-leak-kinds=all --track-origins=yes
 memory:clean build
-	valgrind $(MFLAGS) ./$(EXE) $(INPUT) $(BASE) 
+	valgrind $(MFLAGS) ./$(EXE) $(input) $(base) 
 
 # Adds and updates gitignore rules
 gitignore:
@@ -54,7 +49,8 @@ gitignore:
 	@echo "*.log" >> .gitignore ||:	
 	@echo "*.sln" >> .gitignore ||:	
 	@echo ".vs*" >> .gitignore ||:	
-	@echo "Debug*" >> .gitignore ||:	
+	@echo "Debug*" >> .gitignore ||:
+	@echo "checker/logs*" >> .gitignore ||:	
 
 # Creates an archive of the project
 archive: clean

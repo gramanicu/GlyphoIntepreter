@@ -42,6 +42,7 @@ namespace Glypho {
                 exit(code);
             }
         }
+
     }    // namespace Helpers
 
     namespace Throwable {
@@ -77,17 +78,19 @@ namespace Glypho {
          * @brief Returns the message associated to a specific SyntaxError
          *
          * @param error The SyntaxError
+         * @param line The line of the exception
          * @return std::string The message
          */
-        std::string message(SyntaxError error);
+        std::string message(SyntaxError error, const int line);
 
         /**
          * @brief Returns the message associated to a specific RuntimeException
          *
          * @param exception The RuntimeException
+         * @param line The line of the exception
          * @return std::string The message
          */
-        std::string message(RuntimeException exception);
+        std::string message(RuntimeException exception, const int line);
 
     }    // namespace Throwable
 }    // namespace Glypho
