@@ -61,3 +61,35 @@ std::string Throwable::message(Throwable::RuntimeException exception,
 
     return msg;
 }
+
+char Helpers::charValue(const int number) {
+    if (number >= 0 && number <= 9)
+        return (char)(number + '0');
+    else
+        return (char)(number - 10 + 'A');
+}
+
+std::string Helpers::switchBase(int base, long long int inputNumber) {
+    std::string str = "";
+    bool is_negative = false;
+
+    // Convert input number is given base by repeatedly
+    // dividing it by base and taking remainder
+    if (inputNumber < 0) {
+        is_negative = true;
+        inputNumber = -inputNumber;
+    }
+
+    if (inputNumber == 0) { return "0"; };
+
+    while (inputNumber > 0) {
+        str += Helpers::charValue(inputNumber % base);
+        inputNumber /= base;
+    }
+
+    // Reverse the result
+    std::reverse(str.begin(), str.end());
+    if (is_negative) { str = "-" + str; }
+
+    return str;
+}

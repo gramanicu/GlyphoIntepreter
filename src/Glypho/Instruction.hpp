@@ -158,8 +158,10 @@ namespace Glypho::Core {
          * @param glypho_stack The glypho stack the program uses
          * @param instruction_id The current instruction id in the program
          * @param program The program (instruction vector)
+         * @param base The base of the numbers that can be read from stdin
          */
         void execute(Stack* glypho_stack, long int* instruction_id,
-                     std::vector<Core::Instruction>* program) const;
+                     std::vector<Core::Instruction>* program,
+                     const int base) const;
     };
 }    // namespace Glypho::Core

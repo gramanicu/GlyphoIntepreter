@@ -55,6 +55,6 @@ gitignore:
 # Creates an archive of the project
 archive: clean
 	cp Readme.md README
-	zip -FSr GlyphoIntepreter.zip ./src
+	zip -FSr GlyphoIntepreter.zip ./src README Makefile
 	rm README
 

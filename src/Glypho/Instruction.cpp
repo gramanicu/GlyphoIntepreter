@@ -145,7 +145,8 @@ void Instruction::set_parent_exec(const long int parent_exec_id) {
 long int Instruction::get_parent_exec_id() const { return parent_exec; }
 
 void Instruction::execute(Stack* glypho_stack, long int* program_instruction_id,
-                          std::vector<Core::Instruction>* program) const {
+                          std::vector<Core::Instruction>* program,
+                          const int base) const {
     bool is_jumping = false;
     int next_instr_id = this->get_next_id();
 
@@ -154,19 +155,24 @@ void Instruction::execute(Stack* glypho_stack, long int* program_instruction_id,
             // Read a number from stdin and add it to the stack
             std::string number;
             std::cin >> number;
+            long long int conv_number;
 
             // Parse the input (change from original base to base 10)
+            try {
+                conv_number = stoll(number, nullptr, base);
+            } catch (const std::invalid_argument&) {
+                Helpers::MUST(
+                    false,
+                    Throwable::message(
+                        Throwable::RuntimeException::INPUT_NOT_VALID_INT,
+                        this->get_id()) +
+                        "\n",
+                    -2);
+            } catch (const std::out_of_range&) {
+                // Helpers::MUST(false, "OUT OF RANGE", -2);
+            }
 
-            // Check if the input is a number
-            Helpers::MUST(
-                number.find_first_not_of("-0123456789") == std::string::npos,
-                Throwable::message(
-                    Throwable::RuntimeException::INPUT_NOT_VALID_INT,
-                    this->get_id()) +
-                    "\n",
-                -2);
-
-            glypho_stack->Input(std::stoll(number));
+            glypho_stack->Input(conv_number);
         } break;
         case InstructionType::Rot: {
             glypho_stack->Rotate(get_id());
@@ -191,7 +197,9 @@ void Instruction::execute(Stack* glypho_stack, long int* program_instruction_id,
             if (glypho_stack->Peek(get_id()) == 0) { is_jumping = true; }
         } break;
         case InstructionType::Output: {
-            std::cout << glypho_stack->Output(get_id()) << "\n";
+            std::cout << Helpers::switchBase(base,
+                                             glypho_stack->Output(get_id()))
+                      << "\n";
         } break;
         case InstructionType::Multiply: {
             glypho_stack->Multiply(get_id());
@@ -206,6 +214,15 @@ void Instruction::execute(Stack* glypho_stack, long int* program_instruction_id,
             // Add the new instruction to the program
             Instruction new_instruction(instr_code, new_code);
             new_instruction.set_parent_exec(get_parent_exec_id());
+
+            // Check if we can get this instruction from an execute
+            Helpers::MUST_NOT(
+                (new_instruction.get_type() == InstructionType::RBrace ||
+                 new_instruction.get_type() == InstructionType::LBrace),
+                Throwable::message(Throwable::RuntimeException::INVALID_EXECUTE,
+                                   get_id()) +
+                    "\n",
+                -2);
 
             // Link the new instruction to the others
             long int next_id;

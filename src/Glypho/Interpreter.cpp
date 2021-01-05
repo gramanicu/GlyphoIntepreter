@@ -140,6 +140,7 @@ void Interpreter::run_program() {
     while (instruction_id != -1) {
         instructions_exec++;
         program.at(instruction_id)
-            .execute(&glypho_stack, &instruction_id, &program);
+            .execute(&glypho_stack, &instruction_id, &program,
+                     input_numbers_base);
     }
 }

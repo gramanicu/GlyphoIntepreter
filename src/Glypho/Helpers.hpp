@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <algorithm>
 #include <iostream>
 
 namespace Glypho {
@@ -43,6 +44,23 @@ namespace Glypho {
             }
         }
 
+        /**
+         * @brief Convert a value to a char (base conversion)
+         *
+         * @param number Original value
+         * @return char Converted value
+         */
+        char charValue(const int number);
+
+        /**
+         * @brief Function to convert a number from decimal to a specified base
+         *
+         * @param base The target base
+         * @param inputNumber The original number
+         * @return std::string The converted number (as a string)
+         */
+        std::string switchBase(int base, long long int inputNumber);
+
     }    // namespace Helpers
 
     namespace Throwable {
@@ -68,10 +86,11 @@ namespace Glypho {
                             // stack, but it is empty
             INSUFFICIENT_STACK_SIZE,    // The operation needs more elements
                                         // than are available on the stack
-            INVALID_INPUT_BASE,    // The base of the input numbers is not the
-                                   // one expected
-            DIVISION_BY_0,         // A division by 0 was attempted
-            INPUT_NOT_VALID_INT    // The value provided was not a integer
+            INVALID_INPUT_BASE,     // The base of the input numbers is not the
+                                    // one expected
+            DIVISION_BY_0,          // A division by 0 was attempted
+            INPUT_NOT_VALID_INT,    // The value provided was not a integer
+            INVALID_EXECUTE         // We got a brace from an execute
         };
 
         /**
