@@ -155,11 +155,10 @@ void Instruction::execute(Stack* glypho_stack, long int* program_instruction_id,
             // Read a number from stdin and add it to the stack
             std::string number;
             std::cin >> number;
-            long long int conv_number;
 
             // Parse the input (change from original base to base 10)
             try {
-                conv_number = stoll(number, nullptr, base);
+                stoll(number, nullptr, base);
             } catch (const std::invalid_argument&) {
                 Helpers::MUST(
                     false,
@@ -172,7 +171,7 @@ void Instruction::execute(Stack* glypho_stack, long int* program_instruction_id,
                 // Helpers::MUST(false, "OUT OF RANGE", -2);
             }
 
-            glypho_stack->Input(conv_number);
+            glypho_stack->Input(Helpers::switchFromBase(base, number));
         } break;
         case InstructionType::Rot: {
             glypho_stack->Rotate(get_id());
@@ -197,8 +196,8 @@ void Instruction::execute(Stack* glypho_stack, long int* program_instruction_id,
             if (glypho_stack->Peek(get_id()) == 0) { is_jumping = true; }
         } break;
         case InstructionType::Output: {
-            std::cout << Helpers::switchBase(base,
-                                             glypho_stack->Output(get_id()))
+            std::cout << Helpers::switchToBase(base,
+                                               glypho_stack->Output(get_id()))
                       << "\n";
         } break;
         case InstructionType::Multiply: {

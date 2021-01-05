@@ -53,13 +53,30 @@ namespace Glypho {
         char charValue(const int number);
 
         /**
+         * @brief Convert a char to a numerical value (base conversion)
+         *
+         * @param number Original value
+         * @return int Converted value
+         */
+        int numValue(const char number);
+
+        /**
          * @brief Function to convert a number from decimal to a specified base
          *
          * @param base The target base
          * @param inputNumber The original number
          * @return std::string The converted number (as a string)
          */
-        std::string switchBase(int base, long long int inputNumber);
+        std::string switchToBase(int base, long long int inputNumber);
+
+        /**
+         * @brief Function to convert a number from a specified base to decimal
+         *
+         * @param base The source base
+         * @param str The original number
+         * @return long long int The converted number (as a string)
+         */
+        long long int switchFromBase(int base, std::string str);
 
     }    // namespace Helpers
 

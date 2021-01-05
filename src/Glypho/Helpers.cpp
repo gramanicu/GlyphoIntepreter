@@ -69,7 +69,14 @@ char Helpers::charValue(const int number) {
         return (char)(number - 10 + 'A');
 }
 
-std::string Helpers::switchBase(int base, long long int inputNumber) {
+int Helpers::numValue(const char number) {
+    if (number >= '0' && number <= '9')
+        return (int)number - '0';
+    else
+        return (int)number - 'A' + 10;
+}
+
+std::string Helpers::switchToBase(int base, long long int inputNumber) {
     std::string str = "";
     bool is_negative = false;
 
@@ -92,4 +99,22 @@ std::string Helpers::switchBase(int base, long long int inputNumber) {
     if (is_negative) { str = "-" + str; }
 
     return str;
+}
+
+long long int Helpers::switchFromBase(int base, std::string str) {
+    int power = 1;            // Initialize power of base
+    long long int num = 0;    // Initialize result
+    bool is_negative = false;
+
+    if (str.at(0) == '-') {
+        str.erase(0, 1);
+        is_negative = true;
+    }
+
+    for (int i = str.length() - 1; i >= 0; i--) {
+        num += numValue(str[i]) * power;
+        power = power * base;
+    }
+
+    return (is_negative) ? -num : num;
 }
