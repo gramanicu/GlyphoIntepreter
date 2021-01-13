@@ -151,7 +151,8 @@ namespace Glypho::Core {
         data.push_back(value);
     }
 
-    std::vector<long long int> Stack::Out_K_Elems(const uint64_t count, long int id) {
+    std::vector<long long int> Stack::Out_K_Elems(const uint64_t count,
+                                                  long int id) {
         Helpers::MUST(
             data.size() >= count,
             Throwable::message(

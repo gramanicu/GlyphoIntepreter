@@ -13,7 +13,6 @@
 #include <vector>
 
 #include "Helpers.hpp"
-//#include "Integer.hpp"
 
 namespace Glypho::Core {
     class Stack {

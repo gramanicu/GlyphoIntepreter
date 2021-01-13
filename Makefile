@@ -7,7 +7,7 @@
 CC = g++
 CFLAGS = -Wno-unused-parameter -Wall -Wextra -pedantic -pthread -g -O3 -std=c++17
 EXE = GlyphoIntepreter
-SRC = src/Main.cpp src/Glypho/InputParser.cpp src/Glypho/Interpreter.cpp src/Glypho/Instruction.cpp src/Glypho/Stack.cpp src/Glypho/Integer.cpp src/Glypho/Helpers.cpp
+SRC = src/Main.cpp src/Glypho/InputParser.cpp src/Glypho/Interpreter.cpp src/Glypho/Instruction.cpp src/Glypho/Stack.cpp src/Glypho/Helpers.cpp
 OBJ = $(SRC:.cpp=.o)
 
 CSFILES = */*.cpp */*/*.cpp */*/*.hpp
